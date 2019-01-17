@@ -1,0 +1,13 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:10'
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+    ports:
+      - 5433:5432
+  redis:
+    image: 'redis'
+    ports:
+      - 6379:6379
