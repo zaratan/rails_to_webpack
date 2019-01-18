@@ -13,7 +13,7 @@ class PostsController < ApplicationController
     if post.errors.present?
       flash[:alert] = post.errors.full_messages.join(', ')
     end
-    redirect_to :posts
+    redirect_to root_path
   end
 
   def destroy
@@ -23,7 +23,7 @@ class PostsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     flash[:alert] = "This is not your post"
   ensure
-    redirect_to :posts
+    redirect_to root_path
   end
 
   def update
@@ -33,7 +33,7 @@ class PostsController < ApplicationController
   rescue Pundit::NotAuthorizedError
     flash[:alert] = "This is not your post"
   ensure
-    redirect_to :posts
+    redirect_to root_path
   end
 
   private
