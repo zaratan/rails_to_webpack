@@ -5,11 +5,36 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <link async rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/solid.css" integrity="sha384-+0VIRx+yz1WBcCTXBkVQYIBVNEFH1eP6Zknm16roZCyeNg2maWEpk/l/KsyFKs7G" crossorigin="anonymous">
+    <link async rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
+
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>
-    <%= yield %>
+    <nav class="main-nav">
+      <span>Postbook</span>
+      <% if user_signed_in? %>
+      <%= button_to 'SIGN OUT', destroy_user_session_path ,method: :delete %>
+      <% else %>
+        <span></span>
+      <%end%>
+    </nav>
+    <div class="main-content">
+      <% if notice %>
+      <p class="notice"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+      <p class="alert"><%= alert %></p>
+      <% end %>
+
+      <%= yield %>
+    </div>
+    <footer class="footer">
+      <span>Made with <span class="heart">♥</span> by </span>
+      <a href="https://twitter.com/zaratan" class="twitter-link">@zaratan</a>.
+    </footer>
+
   </body>
 </html>

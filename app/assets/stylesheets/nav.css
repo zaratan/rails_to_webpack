@@ -1,0 +1,12 @@
+nav.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: solid #ccc 1px;
+  box-shadow: 0 1px 1px #ccc;
+}
+
+.main-nav span {
+  font-size: 2rem;
+}

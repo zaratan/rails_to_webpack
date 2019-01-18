@@ -1,0 +1,26 @@
+.footer {
+  font-style: italic;
+  font-size: 1.4rem;
+  height: 3rem;
+  padding-left: 1rem;
+  background-color: #000;
+  color: white;
+}
+
+.footer a {
+  color: rgb(170, 194, 247);
+  transition: color 0.2s ease-in-out;
+}
+
+.footer a:hover {
+  color: rgba(170, 194, 247, 0.708);
+}
+
+.footer .heart {
+  color: white;
+  transition: color 0.2s ease-in-out;
+}
+
+.footer .heart:hover {
+  color: red;
+}

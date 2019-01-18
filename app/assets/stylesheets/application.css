@@ -13,3 +13,64 @@
  *= require_tree .
  *= require_self
  */
+
+html {
+  box-sizing: border-box;
+  font-size: 10px;
+  height: 100%;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+body {
+  padding: 0;
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 2;
+  font-family: "radnika_next";
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+input[type="submit"] {
+  padding: 1rem;
+  border-radius: 3px;
+  transition: background 0.5s;
+}
+
+input[type="submit"]:hover {
+  background: #dae3ff;
+}
+
+.main-content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #e9ebee;
+  overflow-y: scroll;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #dae3ff;
+}
+
+input {
+  font-size: 1.3rem;
+}
