@@ -1,0 +1,7 @@
+.author-name {
+  display: inline-block;
+}
+
+.author-name::first-letter {
+  text-transform: capitalize;
+}

@@ -7,8 +7,15 @@ class PostsController < ApplicationController
   rescue_from ActiveRecord::RecordInvalid, with: :rescue_bad_params
 
   def index
-    @new_post = Post.new
     @posts = Post.all.order(created_at: :desc).includes(:author)
+    respond_to do |format|
+      format.html do
+        @new_post = Post.new
+      end
+      format.json do
+        render json: @posts
+      end
+    end
   end
 
   def create

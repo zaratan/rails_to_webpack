@@ -5,6 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from '../src/App';
+import '../src/styleSheets/post.css';
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(<App />, document.getElementById('app-container'));
