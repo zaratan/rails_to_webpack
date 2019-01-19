@@ -15,6 +15,7 @@ export const postType = PropTypes.shape({
   id: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   author: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
   }).isRequired,
 });

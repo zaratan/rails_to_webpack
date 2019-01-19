@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { postType } from '../APIs/posts';
 import Post from './Post';
+import { userType } from '../APIs/users';
 
-function PostList({ posts }) {
+function PostList({ posts, currentUser }) {
   return (
     <ul>
       {posts.map(post => (
-        <Post post={post} key={post.id} />
+        <Post post={post} key={post.id} currentUser={currentUser} />
       ))}
     </ul>
   );
@@ -15,6 +16,7 @@ function PostList({ posts }) {
 
 PostList.propTypes = {
   posts: PropTypes.arrayOf(postType).isRequired,
+  currentUser: userType,
 };
 
 export default PostList;
