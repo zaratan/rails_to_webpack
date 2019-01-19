@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { postType, removePost } from '../APIs/posts';
+import { postType, removePost, updatePost } from '../APIs/posts';
 import { userType } from '../APIs/users';
+import PostForm from './PostForm';
 
 export class Post extends Component {
   static propTypes = {
@@ -9,6 +10,11 @@ export class Post extends Component {
     currentUser: userType,
     actOnRemove: PropTypes.func.isRequired,
     setErrors: PropTypes.func.isRequired,
+    updateStatePosts: PropTypes.func.isRequired,
+  };
+
+  state = {
+    edit: false,
   };
 
   handleRemoveClick = async () => {
@@ -21,12 +27,39 @@ export class Post extends Component {
     }
   };
 
+  toggleEdit = () => {
+    const { edit } = this.state;
+    this.setState({
+      edit: !edit,
+    });
+  };
+
   renderButtons = () => {
     const { post, currentUser } = this.props;
+    const { edit } = this.state;
     if (currentUser && post.author.id === currentUser.id) {
+      if (edit) {
+        return (
+          <div className="icon-container cancel-flex">
+            <i
+              className="fas fa-plus cancel"
+              onClick={this.toggleEdit}
+              onKeyPress={this.toggleEdit}
+              tabIndex={0}
+              role="button"
+            />
+          </div>
+        );
+      }
       return (
         <div className="icon-container">
-          <i className="fas fa-edit edit" />
+          <i
+            className="fas fa-edit edit"
+            role="button"
+            tabIndex={0}
+            onClick={this.toggleEdit}
+            onKeyPress={this.toggleEdit}
+          />
           <i
             className="remove fas fa-trash-alt"
             style={{ cursor: 'pointer' }}
@@ -40,22 +73,41 @@ export class Post extends Component {
     }
   };
 
-  render() {
-    const { post } = this.props;
-    return (
-      <li className="post">
+  renderPost = () => {
+    const { edit } = this.state;
+    const { post, updateStatePosts, setErrors } = this.props;
+    if (edit) {
+      return (
         <span className="text">
-          {post.text}
+          <PostForm
+            post={post}
+            setErrors={setErrors}
+            actOnPost={updatedPost => {
+              updateStatePosts(updatedPost);
+              return this.toggleEdit();
+            }}
+            actOnSubmit={updatePost}
+          />
           {this.renderButtons()}
-          <span className="author">
-            <span>by </span>
-            <span className="author-name" style={{ display: 'inline-block' }}>
-              {post.author.username}
-            </span>
+        </span>
+      );
+    }
+    return (
+      <span className="text">
+        {post.text}
+        {this.renderButtons()}
+        <span className="author">
+          <span>by </span>
+          <span className="author-name" style={{ display: 'inline-block' }}>
+            {post.author.username}
           </span>
         </span>
-      </li>
+      </span>
     );
+  };
+
+  render() {
+    return <li className="post">{this.renderPost()}</li>;
   }
 }
 

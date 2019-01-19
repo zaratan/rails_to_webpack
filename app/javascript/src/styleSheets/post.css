@@ -1,3 +1,9 @@
 .author-name::first-letter {
   text-transform: capitalize;
 }
+
+i:focus {
+  outline: none;
+  box-shadow: none;
+  color: #31437a;
+}

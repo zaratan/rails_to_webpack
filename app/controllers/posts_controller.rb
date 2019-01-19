@@ -48,7 +48,14 @@ class PostsController < ApplicationController
     post = Post.find(params[:id])
     authorize post
     post.update!(update_params)
-    redirect_to root_path
+    respond_to do |format|
+      format.html do
+        redirect_to root_path
+      end
+      format.json do
+        render json: post
+      end
+    end
   end
 
   private

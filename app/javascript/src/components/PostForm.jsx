@@ -13,9 +13,8 @@ export default class PostForm extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      text: props.post ? props.post.text : ''
-    };
+    const { post } = props;
+    this.state = { text: post ? post.text : '' };
   }
 
   handleChange = e => {
@@ -24,16 +23,25 @@ export default class PostForm extends Component {
     });
   };
 
+  componentDidMount = () => {
+    const { post } = this.props;
+    if (post) {
+      this.nameInput.focus();
+    }
+  };
+
   handleSubmit = async e => {
     e.preventDefault();
-    const { actOnPost, actOnSubmit, setErrors } = this.props;
+    const { actOnPost, actOnSubmit, setErrors, post } = this.props;
     const { text } = this.state;
-    const newPost = await actOnSubmit(text);
+    const newPost = await actOnSubmit({ text, id: post ? post.id : null });
     if (newPost.post) {
       actOnPost(newPost.post);
-      this.setState({
-        text: '',
-      });
+      if (!post) {
+        this.setState({
+          text: '',
+        });
+      }
     } else {
       setErrors(newPost.errors);
     }
@@ -54,6 +62,9 @@ export default class PostForm extends Component {
             placeholder="Jolt something :)"
             value={text}
             onChange={this.handleChange}
+            ref={input => {
+              this.nameInput = input;
+            }}
           />
         </label>
         <input type="submit" value="Post!" />

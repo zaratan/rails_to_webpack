@@ -18,7 +18,7 @@ export const fetchPosts = async () => {
   return postsJSON.posts;
 };
 
-export const addPost = async text => {
+export const addPost = async ({ text }) => {
   const postResponse = await fetch('/posts', {
     method: 'POST',
     headers: {
@@ -39,6 +39,19 @@ export const removePost = async id => {
       Accept: 'application/json',
     },
     body: JSON.stringify(addCsrf({})),
+  });
+  const postJSON = await postResponse.json();
+  return postJSON;
+};
+
+export const updatePost = async ({ id, text }) => {
+  const postResponse = await fetch(`/posts/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(addCsrf({ post: { text } })),
   });
   const postJSON = await postResponse.json();
   return postJSON;

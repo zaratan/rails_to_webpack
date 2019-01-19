@@ -40,6 +40,16 @@ export default class App extends Component {
     });
   };
 
+  updatePost = updatedPost => {
+    const { posts } = this.state;
+    this.setState({
+      posts: posts.map(post =>
+        post.id === updatedPost.id ? updatedPost : post
+      ),
+      errors: [],
+    });
+  };
+
   removePost = removedPost => {
     const { posts } = this.state;
     this.setState({
@@ -73,6 +83,7 @@ export default class App extends Component {
           currentUser={currentUser}
           setErrors={this.setErrors}
           actOnRemove={this.removePost}
+          updatePost={this.updatePost}
         />
       </div>
     );

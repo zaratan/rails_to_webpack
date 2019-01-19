@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 function ErrorList({ errors }) {
   return (
     <ul>
-      {errors.map(err => (
-        <li>{err}</li>
+      {errors.map((err, i) => (
+        <li key={i}>{err}</li>
       ))}
     </ul>
   );
