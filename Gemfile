@@ -39,6 +39,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'devise'
 gem 'pundit'
 
+gem 'webpacker', '>= 4.0.x'
+
 group :development, :test do
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
