@@ -1,11 +1,24 @@
 import React, { Component } from 'react';
-import { postType } from '../APIs/posts';
+import PropTypes from 'prop-types';
+import { postType, removePost } from '../APIs/posts';
 import { userType } from '../APIs/users';
 
 export class Post extends Component {
   static propTypes = {
     post: postType,
     currentUser: userType,
+    actOnRemove: PropTypes.func.isRequired,
+    setErrors: PropTypes.func.isRequired,
+  };
+
+  handleRemoveClick = async () => {
+    const { post, actOnRemove, setErrors } = this.props;
+    const result = await removePost(post.id);
+    if (result.post) {
+      actOnRemove(result.post);
+    } else {
+      setErrors(result.errors);
+    }
   };
 
   renderButtons = () => {
@@ -17,6 +30,10 @@ export class Post extends Component {
           <i
             className="remove fas fa-trash-alt"
             style={{ cursor: 'pointer' }}
+            onClick={this.handleRemoveClick}
+            onKeyPress={this.handleRemoveClick}
+            role="button"
+            tabIndex={0}
           />
         </div>
       );

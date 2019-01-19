@@ -19,15 +19,29 @@ class PostsController < ApplicationController
   end
 
   def create
-    Post.create!(create_params.merge(author: current_user))
-    redirect_to root_path
+    post = Post.create!(create_params.merge(author: current_user))
+    respond_to do |format|
+      format.html do
+        redirect_to root_path
+      end
+      format.json do
+        render json: post
+      end
+    end
   end
 
   def destroy
     post = Post.find(params[:id])
     authorize post
     post.destroy
-    redirect_to root_path
+    respond_to do |format|
+      format.html do
+        redirect_to root_path
+      end
+      format.json do
+        render json: post
+      end
+    end
   end
 
   def update
@@ -45,17 +59,38 @@ class PostsController < ApplicationController
   alias_method :update_params, :create_params
 
   def not_authorized_error
-    flash[:alert] = "This is not your post"
-    redirect_to(root_path)
+    respond_to do |format|
+      format.html do
+        flash[:alert] = "This is not your post"
+        redirect_to(root_path)
+      end
+      format.json do
+        render json: { errors: ["This is not your post"] }
+      end
+    end
   end
 
   def record_not_found
-    flash[:alert] = "The post doesn't exist"
-    redirect_to(root_path)
+    respond_to do |format|
+      format.html do
+        flash[:alert] = "The post doesn't exist"
+        redirect_to(root_path)
+      end
+      format.json do
+        render json: { errors: ["The post doesn't exist"] }
+      end
+    end
   end
 
   def rescue_bad_params(exception)
-    flash[:alert] = exception.record.errors.full_messages.join(", ")
-    redirect_to(root_path)
+    respond_to do |format|
+      format.html do
+        flash[:alert] = exception.record.errors.full_messages.join(", ")
+        redirect_to(root_path)
+      end
+      format.json do
+        render json: { errors: exception.record.errors.full_messages }
+      end
+    end
   end
 end

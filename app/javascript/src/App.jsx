@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { fetchPosts } from './APIs/posts';
+import { fetchPosts, addPost } from './APIs/posts';
 import PostList from './components/PostList';
 import { fetchCurrentUser } from './APIs/users';
+import PostForm from './components/PostForm';
+import ErrorList from './components/ErrorList';
 
 export default class App extends Component {
   state = {
     posts: [],
     currentUser: null,
+    errors: [],
   };
 
   refreshPosts = async () => {
@@ -23,18 +26,54 @@ export default class App extends Component {
     });
   };
 
+  setErrors = errors => {
+    this.setState({
+      errors,
+    });
+  };
+
+  addNewPost = post => {
+    const { posts } = this.state;
+    this.setState({
+      posts: [post, ...posts],
+      errors: [],
+    });
+  };
+
+  removePost = removedPost => {
+    const { posts } = this.state;
+    this.setState({
+      posts: posts.filter(post => removedPost.id !== post.id),
+      errors: [],
+    });
+  };
+
   componentDidMount = async () => {
     await this.refreshCurrentUser();
     await this.refreshPosts();
   };
 
   render() {
-    const { posts, currentUser } = this.state;
+    const { posts, currentUser, errors } = this.state;
     return (
       <div>
         Hello {currentUser ? currentUser.username : 'Unknown'} ! Post count:{' '}
         {posts.length}
-        <PostList posts={posts} currentUser={currentUser} />
+        <ErrorList errors={errors} />
+        <section className="post-create">
+          <p>What are you thinking about ?</p>
+          <PostForm
+            actOnPost={this.addNewPost}
+            actOnSubmit={addPost}
+            setErrors={this.setErrors}
+          />
+        </section>
+        <PostList
+          posts={posts}
+          currentUser={currentUser}
+          setErrors={this.setErrors}
+          actOnRemove={this.removePost}
+        />
       </div>
     );
   }
