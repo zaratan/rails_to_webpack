@@ -1,45 +1,4 @@
 <main class="content">
-  <section class="post-create">
-    <p>What are you thinking about ?</p>
-    <%= form_for @new_post do |f| %>
-      <%= f.label :text, class: "text-label" %>
-      <%= f.text_field :text, placeholder: 'Jolt something :)', class: 'text-field' %>
-
-      <%= f.submit 'Post!' %>
-    <% end %>
-  </section>
-  <section class="posts">
-    <% if @posts.load.empty? %>
-      <p class="post"> No posts for now :( </p>
-    <% end %>
-  <ul>
-    <% @posts.each do |post| %>
-      <li class="post">
-        <span class="text" id="show-text-<%= post.id %>">
-          <%= post.text %>
-          <% if post.author == current_user %>
-            <div class="icon-container">
-              <i class="fas fa-edit edit" data-post="<%= post.id %>"></i>
-              <%= link_to '', post_path(post), class: "remove fas fa-trash-alt", method: 'delete' %>
-            </div>
-          <% end %>
-          <span class="author">by
-          <%= post.author.username.capitalize %>
-          </span>
-        </span>
-        <%= form_for post, method: :patch do |f| %>
-          <%= f.label :text, class: "text-label" %>
-          <%= f.text_field :text, placeholder: 'Jolt something :)', class: 'text-field' %>
-
-          <div class="icon-container cancel-flex">
-            <i class="fas fa-plus cancel" data-post="<%= post.id %>"></i>
-          </div>
-          <%= f.submit 'Edit' %>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
-  </section>
   <div id="app-container"></div>
 </main>
 
