@@ -15,3 +15,17 @@ module DeviseHelper
     end
   end
 end
+
+RSpec.define_context :auth_guarded, ns: 'devise' do
+  context "without authentication" do
+    it "reject the user" do
+      expect(subject).to redirect_to(new_user_session_path)
+    end
+  end
+
+  context "with authenticated user" do
+    before { sign_in_fake }
+
+    execute_tests
+  end
+end

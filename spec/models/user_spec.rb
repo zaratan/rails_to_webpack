@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -23,5 +24,25 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject do
+    build(:user)
+  end
+
+  it "is creatable" do
+    user = create(:user).reload
+    expect(user.id).not_to be_nil
+    expect(user.username).not_to be_nil
+    expect(user.email).not_to be_nil
+  end
+
+  it "follows the posts link" do
+    user = create(:user, :with_posts).reload
+    expect(user.posts.first.author).to eq(user)
+  end
+
+  it { is_expected.to validate_presence_of(:email) }
+  it { is_expected.to validate_presence_of(:username) }
+  it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+  it { is_expected.to validate_uniqueness_of(:username).case_insensitive }
+  it { is_expected.to have_many(:posts).inverse_of(:author) }
 end

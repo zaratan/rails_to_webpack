@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -28,9 +29,12 @@ class User < ApplicationRecord
 
   has_many :posts, inverse_of: :author, dependent: :destroy, foreign_key: 'author_id'
   validates :username, presence: true, uniqueness: { case_sensitive: false }, format: /\A[a-zA-Z0-9_\.]*\z/
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
 
   attr_writer :login
 
+  # Used by devise. No testing
+  # :nocov:
   def login
     @login || username || email
   end
@@ -45,4 +49,5 @@ class User < ApplicationRecord
       find_by(conditions.to_h)
     end
   end
+  # :nocov:
 end

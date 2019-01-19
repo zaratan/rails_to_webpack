@@ -2,6 +2,9 @@
 
 class PostsController < ApplicationController
   before_action :authenticate_user!
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from Pundit::NotAuthorizedError, with: :not_authorized_error
+  rescue_from ActiveRecord::RecordInvalid, with: :rescue_bad_params
 
   def index
     @new_post = Post.new
@@ -9,10 +12,7 @@ class PostsController < ApplicationController
   end
 
   def create
-    post = Post.create(create_params.merge(author: current_user))
-    if post.errors.present?
-      flash[:alert] = post.errors.full_messages.join(', ')
-    end
+    Post.create!(create_params.merge(author: current_user))
     redirect_to root_path
   end
 
@@ -20,19 +20,13 @@ class PostsController < ApplicationController
     post = Post.find(params[:id])
     authorize post
     post.destroy
-  rescue Pundit::NotAuthorizedError
-    flash[:alert] = "This is not your post"
-  ensure
     redirect_to root_path
   end
 
   def update
     post = Post.find(params[:id])
     authorize post
-    post.update(update_params)
-  rescue Pundit::NotAuthorizedError
-    flash[:alert] = "This is not your post"
-  ensure
+    post.update!(update_params)
     redirect_to root_path
   end
 
@@ -42,4 +36,19 @@ class PostsController < ApplicationController
     @create_params ||= params.require(:post).permit(:text)
   end
   alias_method :update_params, :create_params
+
+  def not_authorized_error
+    flash[:alert] = "This is not your post"
+    redirect_to(root_path)
+  end
+
+  def record_not_found
+    flash[:alert] = "The post doesn't exist"
+    redirect_to(root_path)
+  end
+
+  def rescue_bad_params(exception)
+    flash[:alert] = exception.record.errors.full_messages.join(", ")
+    redirect_to(root_path)
+  end
 end

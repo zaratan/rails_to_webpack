@@ -9,7 +9,7 @@ if ENV['COVERAGE']
     add_filter do |source_file|
       source_file.lines.count < 7
     end
-    add_filter "/lib/bot/"
+    add_filter "app/policies/application_policy.rb"
   end
 
   SimpleCov.at_exit do

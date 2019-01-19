@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: posts
@@ -20,6 +21,7 @@
 
 class Post < ApplicationRecord
   validates :text, presence: true, length: { minimum: 6 }
+  validates :author, presence: true
 
   belongs_to :author, class_name: 'User'
 end

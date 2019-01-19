@@ -5,10 +5,4 @@ class PostPolicy < ApplicationPolicy
     record.author_id == user.id
   end
   alias_method :update?, :destroy?
-
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
 end

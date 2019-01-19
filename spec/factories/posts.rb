@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: posts
@@ -20,6 +21,8 @@
 
 FactoryBot.define do
   factory :post do
-    text { "MyText" }
+    text { Faker::DrWho.quote }
+
+    author { create(:user) }
   end
 end
