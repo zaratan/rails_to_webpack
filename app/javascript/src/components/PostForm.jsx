@@ -1,6 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
 import { postType } from '../APIs/posts';
+
+const TextField = styled.input`
+  border: solid 1px #ccc;
+  padding-left: 0.6rem;
+  width: 100%;
+`;
+
+const TextLabel = styled.span`
+  display: none;
+`;
+
+const Label = styled.label`
+  margin-right: 1rem;
+  flex-grow: 1;
+  margin-right: '1rem';
+`;
+
+const Form = styled.form`
+  display: flex;
+`;
 
 export default class PostForm extends Component {
   static propTypes = {
@@ -50,15 +72,13 @@ export default class PostForm extends Component {
   render() {
     const { text } = this.state;
     return (
-      <form className="newPost" onSubmit={this.handleSubmit}>
-        <label htmlFor="text" style={{ flexGrow: 1, marginRight: '1rem' }}>
-          <span style={{ display: 'none' }}>Text :</span>
-          <input
+      <Form className="newPost" onSubmit={this.handleSubmit}>
+        <Label htmlFor="text">
+          <TextLabel>Text :</TextLabel>
+          <TextField
             type="text"
             name="text"
             id="text"
-            className="text-field"
-            style={{ width: '100%' }}
             placeholder="Jolt something :)"
             value={text}
             onChange={this.handleChange}
@@ -66,9 +86,9 @@ export default class PostForm extends Component {
               this.nameInput = input;
             }}
           />
-        </label>
+        </Label>
         <input type="submit" value="Post!" />
-      </form>
+      </Form>
     );
   }
 }

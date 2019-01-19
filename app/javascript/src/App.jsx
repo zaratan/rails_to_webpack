@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { fetchPosts, addPost } from './APIs/posts';
+import { fetchPosts } from './APIs/posts';
 import PostList from './components/PostList';
 import { fetchCurrentUser } from './APIs/users';
-import PostForm from './components/PostForm';
 import ErrorList from './components/ErrorList';
+import Style from './components/Style';
+import PostCreate from './components/PostCreate';
 
 export default class App extends Component {
   state = {
@@ -66,18 +67,11 @@ export default class App extends Component {
   render() {
     const { posts, currentUser, errors } = this.state;
     return (
-      <div>
+      <Style>
         Hello {currentUser ? currentUser.username : 'Unknown'} ! Post count:{' '}
         {posts.length}
+        <PostCreate setErrors={this.setErrors} addNewPost={this.addNewPost} />
         <ErrorList errors={errors} />
-        <section className="post-create">
-          <p>What are you thinking about ?</p>
-          <PostForm
-            actOnPost={this.addNewPost}
-            actOnSubmit={addPost}
-            setErrors={this.setErrors}
-          />
-        </section>
         <PostList
           posts={posts}
           currentUser={currentUser}
@@ -85,7 +79,7 @@ export default class App extends Component {
           actOnRemove={this.removePost}
           updatePost={this.updatePost}
         />
-      </div>
+      </Style>
     );
   }
 }
