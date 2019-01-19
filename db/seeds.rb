@@ -7,3 +7,10 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+user = User.find_or_create_by(email: 'denis.pasin@gmail.com', username: 'zaratan') do |u|
+  u.password = 'pommes'
+end
+
+Post.find_or_create_by(text: '1st post', author: user)
+Post.find_or_create_by(text: '2nd post', author: user)
