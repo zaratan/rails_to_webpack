@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FlipMove from 'react-flip-move';
 import { postType } from '../APIs/posts';
 import Post from './Post';
 import { userType } from '../APIs/users';
 
 function PostList({ posts, currentUser, actOnRemove, setErrors, updatePost }) {
   return (
-    <ul>
+    <FlipMove typeName="ul">
       {posts.map(post => (
         <Post
           post={post}
@@ -17,7 +18,7 @@ function PostList({ posts, currentUser, actOnRemove, setErrors, updatePost }) {
           updateStatePosts={updatePost}
         />
       ))}
-    </ul>
+    </FlipMove>
   );
 }
 

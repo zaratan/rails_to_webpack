@@ -60,7 +60,7 @@ const AuthorName = styled.span`
   }
 `;
 
-export class Post extends Component {
+class Post extends Component {
   static propTypes = {
     post: postType,
     currentUser: userType,
