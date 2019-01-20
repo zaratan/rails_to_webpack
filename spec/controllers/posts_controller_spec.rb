@@ -5,13 +5,30 @@ require 'rails_helper'
 RSpec.describe PostsController, type: :controller do
   describe ":index" do
     subject do
-      get :index
+      get :index, params: params
     end
+
+    let(:params) { {} }
 
     in_context :auth_guarded do
       it "is successful" do
         subject
         expect(response).to be_successful
+      end
+
+      context "with JSON format" do
+        let(:params) { { format: "json" } }
+        let!(:posts) { create_list(:post, Random.rand(2..4)) }
+
+        it "is successful" do
+          subject
+          expect(response).to be_successful
+        end
+
+        it "returns all the posts" do
+          subject
+          expect(json_response[:posts].size).to eq(posts.size)
+        end
       end
     end
   end
@@ -20,13 +37,9 @@ RSpec.describe PostsController, type: :controller do
     context "with invalid text" do
       let(:text) { Faker::Lorem.characters(5) }
 
-      it "redirects to root" do
-        expect(subject).to redirect_to(root_path)
-      end
-
-      it "populates the flash alert" do
+      it "returns an error" do
         subject
-        expect(flash[:alert]).to match(/Text is too short/)
+        expect(json_response[:errors].first).to match(/Text is too short/)
       end
 
       execute_tests
@@ -42,13 +55,15 @@ RSpec.describe PostsController, type: :controller do
     let(:text) { Faker::StarWars.quote }
 
     in_context :auth_guarded do
-      it "redirects to root" do
-        expect(subject).to redirect_to(root_path)
-      end
-
       it "creates a new post" do
         expect{ subject }.to change(Post, :count).by(1)
         expect(Post.last.text).to eq(text)
+      end
+
+      it "returns the post" do
+        subject
+        post = Post.last
+        expect(json_response[:post]).to eq("id" => post.id, "text" => post.text, "author" => { "id" => test_user.id, "username" => test_user.username })
       end
 
       in_context "invalid text" do
@@ -63,29 +78,21 @@ RSpec.describe PostsController, type: :controller do
     context "when the post doesn't exist" do
       let(:id) { Faker::Lorem.characters(20) }
 
-      it "redirects to root" do
-        expect(subject).to redirect_to(root_path)
-      end
-
-      it "populates an alert" do
+      it "returns an error" do
         subject
-        expect(flash[:alert]).not_to be_blank
+        expect(json_response[:errors]).not_to be_empty
       end
     end
   end
 
   define_context "not the author" do
     context "when the user isn't the author" do
-      it "populates an alert" do
+      it "sends an error" do
         subject
-        expect(flash[:alert]).not_to be_blank
+        expect(json_response[:errors]).not_to be_empty
       end
 
       execute_tests
-
-      it "redirects to root" do
-        expect(subject).to redirect_to(root_path)
-      end
     end
   end
 
@@ -94,10 +101,6 @@ RSpec.describe PostsController, type: :controller do
       let!(:post) { create(:post, author: test_user) }
 
       execute_tests
-
-      it "redirects to root" do
-        expect(subject).to redirect_to(root_path)
-      end
     end
   end
 
@@ -115,7 +118,13 @@ RSpec.describe PostsController, type: :controller do
         it "destroys the post" do
           expect{ subject }.to change(Post, :count).by(-1)
         end
+
+        it "returns the post" do
+          subject
+          expect(json_response[:post]).not_to be_nil
+        end
       end
+
       in_context "not the author" do
         it "doesn't destroy the post" do
           expect{ subject }.not_to change(Post, :count)
@@ -146,6 +155,11 @@ RSpec.describe PostsController, type: :controller do
       in_context "is the author" do
         it "updates the post" do
           expect{ subject }.to change{ post.reload.text }.to(text)
+        end
+
+        it "returns the post" do
+          subject
+          expect(json_response[:post]).not_to be_nil
         end
 
         in_context "invalid text" do
