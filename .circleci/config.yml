@@ -17,6 +17,7 @@ jobs:
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: circle-test_test
+          POSTGRES_PORT: 5433
 
     steps:
       - checkout
@@ -83,37 +84,6 @@ jobs:
       - store_artifacts:
           path: ~/app/coverage
           destination: coverage-results
-      - setup_remote_docker:   # (2)
-          docker_layer_caching: true # (3)
-      - run:
-          name: building container
-          command: |
-            TAG=$CIRCLE_BUILD_NUM
-            docker build --build-arg RAILS_MASTER_KEY -t zaratan/slack_log:$TAG .      # (4)
-            if [ $CIRCLE_BRANCH = "master" ]; then docker tag zaratan/slack_log:$TAG zaratan/slack_log:latest; fi
-      - run:
-          name: publishing container
-          command: |
-            TAG=$CIRCLE_BUILD_NUM
-            docker login -u $DOCKER_USER -p $DOCKER_PASS         # (5)
-            docker push zaratan/slack_log:$TAG
-            if [ $CIRCLE_BRANCH = "master" ]; then docker push zaratan/slack_log:latest; fi
-  deploy:
-    machine:
-      enabled: true
-    steps:
-      - run:
-          name: Deploy Over SSH
-          command: |
-            ssh $SSH_USER@$SSH_HOST "./upgrade_slack_log.sh"
-workflows:
-  version: 2
-  build-and-deploy:
-    jobs:
-      - build
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+      - store_artifacts:
+          path: ~/app/cypress/videos
+          destination: coverage-results
