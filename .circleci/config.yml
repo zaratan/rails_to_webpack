@@ -69,7 +69,7 @@ jobs:
       - run:
           name: start server for Integration tests
           command: |
-            bundle exec rails db:reset && bundle exec rails db:seed && bundle exec rails s -p 2999 && wait-on http://localhost:2999
+            bundle exec rails db:reset && bundle exec rails db:seed && bundle exec rails s -p 2999 -d && wait-on http://localhost:2999
 
       - run:
           name: run integration tests
