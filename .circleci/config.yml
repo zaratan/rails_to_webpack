@@ -48,7 +48,7 @@ jobs:
           paths:
             - ./vendor/bundle
             - ~/.cache
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+          key: v1-dependencies-r-{{ checksum "Gemfile.lock" }}-y-{{ checksum "yarn.lock" }}
         
 
       - run:
