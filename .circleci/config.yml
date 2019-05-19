@@ -1,0 +1,119 @@
+# Ruby CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-ruby/ for more details
+#
+version: 2
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: circleci/ruby:2.5.3-node
+        environment:
+          RAILS_ENV: test
+          PGHOST: 127.0.0.1
+          DB_USERNAME: root
+          DB_PASSWORD: ""
+      - image: circleci/postgres:10-alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle-test_test
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - run:
+          name: install dependencies
+          command: |
+            yarn install
+
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+        
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      # Database setup
+      - run: bundle exec rails db:create db:migrate
+
+      - run:
+          name: run linting
+          command: |
+            bundle exec rubocop
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            mkdir /tmp/test-results
+            COVERAGE=true bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --format progress
+      - run:
+          name: start server for Integration tests
+          command: |
+            rails db:reset && rails db:seed && rails s -p 2999 && wait-on http://localhost:2999
+
+      - run:
+          name: run integration tests
+          command: |
+            npx cypress run
+
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+      - store_artifacts:
+          path: ~/app/coverage
+          destination: coverage-results
+      - setup_remote_docker:   # (2)
+          docker_layer_caching: true # (3)
+      - run:
+          name: building container
+          command: |
+            TAG=$CIRCLE_BUILD_NUM
+            docker build --build-arg RAILS_MASTER_KEY -t zaratan/slack_log:$TAG .      # (4)
+            if [ $CIRCLE_BRANCH = "master" ]; then docker tag zaratan/slack_log:$TAG zaratan/slack_log:latest; fi
+      - run:
+          name: publishing container
+          command: |
+            TAG=$CIRCLE_BUILD_NUM
+            docker login -u $DOCKER_USER -p $DOCKER_PASS         # (5)
+            docker push zaratan/slack_log:$TAG
+            if [ $CIRCLE_BRANCH = "master" ]; then docker push zaratan/slack_log:latest; fi
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            ssh $SSH_USER@$SSH_HOST "./upgrade_slack_log.sh"
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

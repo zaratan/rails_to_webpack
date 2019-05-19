@@ -28,3 +28,4 @@
 .env
 converage
 coverage
+cypress/videos
