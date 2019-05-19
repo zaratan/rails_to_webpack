@@ -42,6 +42,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
+            - ./node_modules
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
         
 
