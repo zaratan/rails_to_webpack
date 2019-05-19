@@ -25,14 +25,14 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+          - v1-dependencies-r-{{ checksum "Gemfile.lock" }}-y-{{ checksum "yarn.lock" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
       - run:
           name: install libs
           command: |
-            apt-get install xvfb libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
+            sudo apt-get install xvfb libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
 
       - run:
           name: install dependencies
@@ -42,12 +42,12 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            yarn install
+            yarn install --frozen-lockfile
 
       - save_cache:
           paths:
             - ./vendor/bundle
-            - ./node_modules
+            - ~/.cache
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
         
 
