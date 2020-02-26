@@ -131,7 +131,7 @@ GEM
     pry-byebug (3.7.0)
       byebug (~> 11.0)
       pry (~> 0.10)
-    puma (3.12.1)
+    puma (3.12.2)
     pundit (2.0.1)
       activesupport (>= 3.0.0)
     rack (2.0.8)
@@ -292,7 +292,7 @@ DEPENDENCIES
   nyan-cat-formatter
   pg (>= 0.18, < 2.0)
   pry-byebug
-  puma (~> 3.11)
+  puma (~> 3.12)
   pundit
   rails (~> 5.2.2)
   rspec-rails
